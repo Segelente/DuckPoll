@@ -1,12 +1,14 @@
+use serde::{Deserialize, Serialize};
 struct Question {
     id: u32,
     text: String,
     options: Vec<String>,
 }
-
-struct Poll {
-    title: String,
-    id: u32,
+#[derive(Serialize, Deserialize)]
+pub struct Poll {
+    pub title: String,
+    pub id: u32,
+    #[serde(skip)]
     question: Vec<Question>,
 }
 
