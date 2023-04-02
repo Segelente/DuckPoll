@@ -1,10 +1,10 @@
 use serde::{Deserialize, Serialize};
+#[derive(Serialize, Deserialize, Debug)]
 struct Question {
-    id: u32,
     text: String,
     options: Vec<String>,
 }
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Poll {
     pub title: String,
     pub id: u32,
@@ -23,7 +23,7 @@ impl Poll {
 }
 
 impl Question {
-    fn new(id: u32, text: String, options: Vec<String>) -> Question {
-        Question { id, text, options }
+    fn new(text: String, options: Vec<String>) -> Question {
+        Question { text, options }
     }
 }

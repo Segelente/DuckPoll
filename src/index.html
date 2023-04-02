@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Button and Text Field with Tailwind CSS</title>
+    <!-- Include Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-white">
+<div class="max-w-md mx-auto mt-10">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-md">
+        <h1 class="text-xl font-bold mb-6">Name your Poll and create it!</h1>
+        <form id="poll-form">
+            <div class="mb-4">
+                <label class="block font-bold mb-2" for="title">
+                    Poll Name
+                </label>
+                <input class="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline-gray bg-gray-700" id="title" name="title" type="text" placeholder="Enter your poll name">
+            </div>
+            <div class="mb-4">
+                <label class="block font-bold mb-2" for="id">
+                    Poll ID
+                </label>
+                <input class="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline-gray bg-gray-700" id="id" name="id" type="number" placeholder="Enter your poll ID">
+            </div>
+            <button id="create-poll-button" class="bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline-blue" type="submit">
+                Create Poll
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const form = document.querySelector('form');
+    const pollNameInput = document.getElementById('title');
+    const pollIdInput = document.getElementById('id');
+    const createPollButton = document.querySelector('button');
+
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const poll = {
+            title: pollNameInput.value,
+            id: parseInt(pollIdInput.value),
+        };
+
+        fetch('/create_poll', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(poll)
+        })
+            .then(response => {
+                console.log(response);
+                window.location.href = '/poll/' + poll.id;
+                form.reset();
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    });
+</script>
+</body>
+</html>
