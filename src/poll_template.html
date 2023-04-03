@@ -12,10 +12,10 @@
         <h1 class="text-xl font-bold mb-6">Create a Poll</h1>
         <form id="poll-form">
             <div class="mb-4">
-                <label class="block font-bold mb-2" for="question">
+                <label class="block font-bold mb-2" for="title">
                     Poll Question
                 </label>
-                <input class="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline-gray bg-gray-700" id="question" name="question" type="text" placeholder="Enter your poll question">
+                <input class="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline-gray bg-gray-700" id="title" name="title" type="text" placeholder="Enter your poll question">
             </div>
             <div class="mb-4">
                 <label class="block font-bold mb-2" for="option1">
@@ -41,5 +41,42 @@
         </form>
     </div>
 </div>
+<script>
+    const form = document.querySelector('#poll-form');
+    const questionTitle = document.getElementById('title');
+    const  questionOption1= document.getElementById('option1');
+    const  questionOption2= document.getElementById('option2');
+    const  questionOption3= document.getElementById('option3');
+    const createPollButton = document.querySelector('#create-poll-button');
+
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const poll = {
+            title: questionTitle.value,
+            options: [
+                questionOption1.value,
+                questionOption2.value,
+                questionOption3.value
+            ]
+        };
+
+        fetch('/poll_question', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(poll)
+        })
+            .then(response => {
+                console.log(response);
+                form.reset();
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    });
+</script>
 </body>
 </html>
+
