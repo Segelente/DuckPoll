@@ -22,6 +22,12 @@ async fn question(body: String) -> impl Responder {
         .content_type("text/html; charset=utf-8")
         .body("Poll created")
 }
+#[post("/add_or_delete_question")]
+async fn add_question(body: String) -> impl Responder {
+    // add question to poll or delete question from poll
+
+
+}
 
 #[get("/")]
 async fn button() -> HttpResponse {
@@ -45,6 +51,8 @@ pub(crate) async fn main() -> std::io::Result<()> {
             .service(button)
             .service(create_poll)
             .service(poll_form)
+            .service(question)
+            .service(add_question)
     })
         .bind("127.60.20.1:7373")?
         .run()

@@ -42,6 +42,8 @@
     const pollNameInput = document.getElementById('title');
     const pollIdInput = document.getElementById('id');
     const createPollButton = document.querySelector('button');
+    const addQuestionButton = document.getElementById('add_question');
+    const removeQuestionButton = document.getElementById('remove_question');
 
     form.addEventListener('submit', (event) => {
         event.preventDefault();
@@ -67,6 +69,39 @@
                 console.error(error);
             });
     });
+    addQuestionButton.addEventListener('click', () => {
+        fetch('/add_or_delete_question', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ action: 'add_question' })
+        })
+            .then(response => {
+                console.log(response);
+                // Do something with the response if needed
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    });
+    removeQuestionButton.addEventListener('click', () => {
+        fetch('/add_or_delete_question', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ action: 'remove_question' })
+        })
+            .then(response => {
+                console.log(response);
+                // Do something with the response if needed
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    });
+
 </script>
 </body>
 </html>
