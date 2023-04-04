@@ -1,19 +1,21 @@
 use std::fs::read_to_string;
 use actix_web::{web, App, HttpResponse, HttpServer, Responder, post, get, body};
-use actix_web::web::Redirect;
+use actix_web::web::{Query, Redirect};
 use serde::{Deserialize};
 use serde_json::{json, Value};
+use sqlx::SqlitePool;
 use crate::poll::{Poll, Question};
 // Webpage to create a poll
 #[post("/create_poll")]
 async fn create_poll(body: String) -> impl Responder {
+    let pool = SqlitePool::connect("identifier.sqlite").await.unwrap();
     let poll: Poll = serde_json::from_str(&body).unwrap();
     println!("{:?}", poll);
+    insert_poll(pool, &poll).await.expect("TODO: panic message");
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
         .body("Poll created")
 }
-
 #[get("/")]
 async fn index() -> HttpResponse {
     let body = read_to_string("src/index.html").unwrap();
@@ -28,16 +30,67 @@ async fn polli() -> HttpResponse {
         .content_type("text/html; charset=utf-8")
         .body(body)
 }
+async fn insert_poll(pool: SqlitePool, poll: &Poll) -> Result<(), std::io::Error> {
+    // Insert the poll into the `poll` table
+    let poll_id: i32 = sqlx::query_scalar("INSERT INTO poll (title) VALUES (?) RETURNING id")
+        .bind(&poll.title)
+        .fetch_one(&pool)
+        .await.unwrap();
+
+    // Insert each question and its options into the `question_option` table
+    for question in &poll.questions {
+        let question_id: i32 = sqlx::query_scalar("INSERT INTO question (poll_id, text, option1, option2, option3) VALUES (?, ?, ?, ?, ?) RETURNING id")
+            .bind(&poll_id)
+            .bind(&question.text)
+            .bind(&question.options[0])
+            .bind(&question.options[1])
+            .bind(&question.options[2])
+            .fetch_one(&pool)
+            .await.unwrap();
+    }
+
+    Ok(())
+}
+
+#[allow(dead_code)]
+async fn create_tables(pool: &SqlitePool) -> Result<(), std::io::Error> {
+    // Create the `poll` table
+    sqlx::query(
+        r#"
+        CREATE TABLE IF NOT EXISTS poll (
+            id INTEGER PRIMARY KEY,
+            title TEXT NOT NULL
+        )
+        "#,
+    )
+        .execute(pool)
+        .await.unwrap();
+
+    // Create the `question` table
+    sqlx::query(
+        r#"
+        CREATE TABLE IF NOT EXISTS question (
+            id INTEGER PRIMARY KEY,
+            poll_id INTEGER NOT NULL,
+            text TEXT NOT NULL,
+            FOREIGN KEY (poll_id) REFERENCES poll (id) ON DELETE CASCADE
+        )
+        "#,
+    )
+        .execute(pool)
+        .await.unwrap();
+    Ok(())
+}
 
 #[actix_web::main]
 pub(crate) async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
-        App::new()
-            .service(index)
-            .service(create_poll)
-            .service(polli)
-    })
-        .bind("127.60.20.1:7373")?
-        .run()
-        .await
+   HttpServer::new(|| {
+       App::new()
+           .service(index)
+           .service(create_poll)
+           .service(polli)
+   })
+       .bind("127.60.20.1:7373")?
+       .run()
+       .await
 }
