@@ -7,7 +7,6 @@ use crate::poll::{Poll, Question};
 // Webpage to create a poll
 #[post("/create_poll")]
 async fn create_poll(body: String) -> impl Responder {
-    println!("{:?}", body);
     let poll: Poll = serde_json::from_str(&body).unwrap();
     println!("{:?}", poll);
     HttpResponse::Ok()
@@ -22,6 +21,13 @@ async fn index() -> HttpResponse {
         .content_type("text/html; charset=utf-8")
         .body(body)
 }
+#[get("/poll/{poll_id}")]
+async fn polli() -> HttpResponse {
+    let body = read_to_string("src/poll.html").unwrap();
+    HttpResponse::Ok()
+        .content_type("text/html; charset=utf-8")
+        .body(body)
+}
 
 #[actix_web::main]
 pub(crate) async fn main() -> std::io::Result<()> {
@@ -29,6 +35,7 @@ pub(crate) async fn main() -> std::io::Result<()> {
         App::new()
             .service(index)
             .service(create_poll)
+            .service(polli)
     })
         .bind("127.60.20.1:7373")?
         .run()

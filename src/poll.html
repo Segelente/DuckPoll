@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DuckPoll</title>
+    <!-- Include Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-white">
+<div class="max-w-md mx-auto mt-10">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-md">
+        <h1 class="text-xl font-bold mb-6">Answer the Poll and submit it!</h1>
+        <div class="mb-4">
+            <label class="block font-bold mb-2" for="title">
+                Poll Name
+            </label>
+            <a class="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline-gray bg-gray-700"
+               id="title" type="text">[Poll title]
+            </a>
+        </div>
+        <div class="mb-4 poll-question" style="display:none">
+            <label class="block font-bold mb-2" for="question">
+                Poll Question
+            </label>
+            <a class="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline-gray bg-gray-700"
+               id="question" type="text">[Question title]</a>
+        </div>
+        <div class="mb-4 option1" style="display:none">
+            <label class="block font-bold mb-2" for="option1">
+                Option 1
+            </label>
+            <a class="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline-gray bg-gray-700"
+               id="option1" type="text">[Option]</a>
+        </div>
+        <div class="mb-4 option2" style="display:none">
+            <label class="block font-bold mb-2" for="option2">
+                Option 2
+            </label>
+            <a class="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline-gray bg-gray-700"
+               id="option2" type="text">[Option]</a>
+        </div>
+        <button id="submit-poll-button"
+                class="block mt-4 bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline-blue"
+                type="submit">
+            Send Answers
+        </button>
+
+    </div>
+</div>
+</body>
+</html>
