@@ -8,8 +8,7 @@ pub struct Question {
 pub struct Poll {
     pub title: String,
     pub id: u32,
-    #[serde(skip)]
-    questions: Vec<Question>,
+    pub questions: Vec<Question>,
 }
 
 impl Poll {
@@ -23,7 +22,7 @@ impl Poll {
 }
 
 impl Question {
-    fn new(text: String, options: Vec<String>) -> Question {
+    pub(crate) fn new(text: String, options: Vec<String>) -> Question {
         Question { text, options }
     }
 }

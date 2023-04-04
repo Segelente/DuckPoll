@@ -10,7 +10,7 @@
 <div class="max-w-md mx-auto mt-10">
     <div class="bg-gray-800 p-6 rounded-lg shadow-md">
         <h1 class="text-xl font-bold mb-6">Name your Poll and create it!</h1>
-        <form id="poll-form">
+        <form id="poll-form" class="poll-questions-container">
             <div class="mb-4">
                 <label class="block font-bold mb-2" for="title">
                     Poll Name
@@ -23,6 +23,25 @@
                 </label>
                 <input class="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline-gray bg-gray-700" id="id" name="id" type="number" placeholder="Enter your poll ID">
             </div>
+            <div class="mb-4 poll-question" style="display:none">
+                <label class="block font-bold mb-2" for="question">
+                    Poll Question
+                </label>
+                <input class="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline-gray bg-gray-700" id="question" name="question" type="text" placeholder="Enter your poll question">
+            </div>
+            <div class="mb-4 option1" style="display:none">
+                <label class="block font-bold mb-2" for="option1">
+                    Option 1
+                </label>
+                <input class="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline-gray bg-gray-700" id="option1" name="option1" type="text" placeholder="Enter option 1">
+            </div>
+            <div class="mb-4 option2" style="display:none">
+                <label class="block font-bold mb-2" for="option2">
+                    Option 2
+                </label>
+                <input class="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline-gray bg-gray-700" id="option2" name="option2" type="text" placeholder="Enter option 2">
+            </div>
+
             <button id="add_question" class="bg-gray-700 hover:bg-gray-600 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline-gray mr-2" type="button">
                 +
             </button>
@@ -38,6 +57,38 @@
 </div>
 
 <script>
+    function createOptionField(questionCount, optionCount) {
+        const optionContainer = document.createElement("div");
+        optionContainer.classList.add("mb-4");
+
+        const optionLabel = document.createElement("label");
+        optionLabel.classList.add("block");
+        optionLabel.classList.add("font-bold");
+        optionLabel.classList.add("mb-2");
+        optionLabel.setAttribute("for", `question-${questionCount}-option${optionCount}`);
+        optionLabel.innerText = `Option ${optionCount}`;
+
+        const optionInput = document.createElement("input");
+        optionInput.classList.add("appearance-none");
+        optionInput.classList.add("border");
+        optionInput.classList.add("rounded");
+        optionInput.classList.add("w-full");
+        optionInput.classList.add("py-2");
+        optionInput.classList.add("px-3");
+        optionInput.classList.add("leading-tight");
+        optionInput.classList.add("focus:outline-none");
+        optionInput.classList.add("focus:shadow-outline-gray");
+        optionInput.classList.add("bg-gray-700");
+        optionInput.setAttribute("id", `question-${questionCount}-option${optionCount}`);
+        optionInput.setAttribute("name", `question-${questionCount}-option${optionCount}`);
+        optionInput.setAttribute("type", "text");
+        optionInput.setAttribute("placeholder", `Enter option ${optionCount}`);
+
+        optionContainer.appendChild(optionLabel);
+        optionContainer.appendChild(optionInput);
+
+        return optionContainer;
+    }
     const form = document.querySelector('form');
     const pollNameInput = document.getElementById('title');
     const pollIdInput = document.getElementById('id');
@@ -51,8 +102,27 @@
         const poll = {
             title: pollNameInput.value,
             id: parseInt(pollIdInput.value),
+            questions: []
         };
 
+        for (let i = 1; i < questionCount; i++) {
+            const question = document.querySelector(`#question-${i}`);
+            if (question) {
+                const questionObj = {
+                    text: question.value,
+                    options: []
+                };
+
+                for (let j = 1; j <= 3; j++) {
+                    const option = document.querySelector(`#question-${i}-option${j}`);
+                    if (option) {
+                        questionObj.options.push(option.value);
+                    }
+                }
+
+                poll.questions.push(questionObj);
+            }
+        }
         fetch('/create_poll', {
             method: 'POST',
             headers: {
@@ -69,38 +139,58 @@
                 console.error(error);
             });
     });
-    addQuestionButton.addEventListener('click', () => {
-        fetch('/add_or_delete_question', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ action: 'add_question' })
-        })
-            .then(response => {
-                console.log(response);
-                // Do something with the response if needed
-            })
-            .catch(error => {
-                console.error(error);
-            });
+
+    const questionContainer = document.querySelector(".poll-questions-container");
+
+    let questionCount = 1;
+
+    addQuestionButton.addEventListener("click", function() {
+        const newQuestionContainer = document.createElement("div");
+        newQuestionContainer.classList.add("mb-4");
+        newQuestionContainer.classList.add("poll-question");
+
+        const newQuestionLabel = document.createElement("label");
+        newQuestionLabel.classList.add("block");
+        newQuestionLabel.classList.add("font-bold");
+        newQuestionLabel.classList.add("mb-2");
+        newQuestionLabel.setAttribute("for", "question-" + questionCount);
+        newQuestionLabel.innerText = "Poll Question " + questionCount;
+
+        const newQuestionInput = document.createElement("input");
+        newQuestionInput.classList.add("appearance-none");
+        newQuestionInput.classList.add("border");
+        newQuestionInput.classList.add("rounded");
+        newQuestionInput.classList.add("w-full");
+        newQuestionInput.classList.add("py-2");
+        newQuestionInput.classList.add("px-3");
+        newQuestionInput.classList.add("leading-tight");
+        newQuestionInput.classList.add("focus:outline-none");
+        newQuestionInput.classList.add("focus:shadow-outline-gray");
+        newQuestionInput.classList.add("bg-gray-700");
+        newQuestionInput.setAttribute("id", "question-" + questionCount);
+        newQuestionInput.setAttribute("name", "question-" + questionCount);
+        newQuestionInput.setAttribute("type", "text");
+        newQuestionInput.setAttribute("placeholder", "Enter your poll question");
+
+        newQuestionContainer.appendChild(newQuestionLabel);
+        newQuestionContainer.appendChild(newQuestionInput);
+
+        for (let i = 1; i <= 3; i++) {
+            const optionField = createOptionField(questionCount, i);
+            newQuestionContainer.appendChild(optionField);
+        }
+
+        questionContainer.appendChild(newQuestionContainer);
+        questionCount++;
     });
-    removeQuestionButton.addEventListener('click', () => {
-        fetch('/add_or_delete_question', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ action: 'remove_question' })
-        })
-            .then(response => {
-                console.log(response);
-                // Do something with the response if needed
-            })
-            .catch(error => {
-                console.error(error);
-            });
+    removeQuestionButton.addEventListener("click", function() {
+        if (questionCount > 1) {
+            questionContainer.removeChild(questionContainer.lastChild);
+            questionCount--;
+        }
     });
+
+
 
 </script>
 </body>
