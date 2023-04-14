@@ -122,9 +122,11 @@
             },
             body: JSON.stringify(poll)
         })
-            .then(response => {
-                console.log(response);
-                window.location.href = '/poll/' + poll.title;
+            .then(async response => {
+                let data = await response.text();
+                const parsedResponse = JSON.parse(data);
+                const poll_id = parsedResponse.poll_id;
+                window.location.href = '/poll/' + poll_id;
                 form.reset();
             })
             .catch(error => {

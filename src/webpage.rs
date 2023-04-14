@@ -11,10 +11,11 @@ async fn create_poll(body: String) -> impl Responder {
     let pool = SqlitePool::connect("identifier.sqlite").await.unwrap();
     let poll: Poll = serde_json::from_str(&body).unwrap();
     println!("{:?}", poll);
-    insert_poll(pool, &poll).await.expect("TODO: panic message");
-    HttpResponse::Ok()
-        .content_type("text/html; charset=utf-8")
-        .body("Poll created")
+    insert_poll(pool.clone(), &poll).await.expect("TODO: panic message");
+    let poll_id: i32 = get_id_from_database(pool, &poll).await;
+    HttpResponse::Ok().json(json!({
+        "poll_id": poll_id
+    }))
 }
 #[get("/")]
 async fn index() -> HttpResponse {
@@ -24,11 +25,28 @@ async fn index() -> HttpResponse {
         .body(body)
 }
 #[get("/poll/{poll_id}")]
-async fn polli() -> HttpResponse {
+async fn polli(poll_id: i32) -> HttpResponse {
+    let pool = SqlitePool::connect("identifier.sqlite").await.unwrap();
+    let poll: String = get_poll_from_database(pool, poll_id).await;
+    println!("{:?}", poll);
     let body = read_to_string("src/poll.html").unwrap();
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
         .body(body)
+}
+async fn get_id_from_database(pool: SqlitePool, poll: &Poll) -> i32 {
+    let poll_id: i32 = sqlx::query_scalar("SELECT id FROM poll WHERE title = ?")
+        .bind(&poll.title)
+        .fetch_one(&pool)
+        .await.unwrap();
+    poll_id
+}
+async fn get_poll_from_database(pool: SqlitePool, poll_id: i32) -> Poll {
+    let poll: Poll = sqlx::query_scalar("SELECT * FROM poll WHERE id = ?")
+        .bind(&poll_id)
+        .fetch_one(&pool)
+        .await.unwrap()x;
+    poll
 }
 async fn insert_poll(pool: SqlitePool, poll: &Poll) -> Result<(), std::io::Error> {
     // Insert the poll into the `poll` table
