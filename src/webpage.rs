@@ -27,7 +27,7 @@ async fn index() -> HttpResponse {
 #[get("/poll/{poll_id}")]
 async fn polli(poll_id: i32) -> HttpResponse {
     let pool = SqlitePool::connect("identifier.sqlite").await.unwrap();
-    let poll: String = get_poll_from_database(pool, poll_id).await;
+    let poll: Poll = get_poll_from_database(pool, poll_id).await;
     println!("{:?}", poll);
     let body = read_to_string("src/poll.html").unwrap();
     HttpResponse::Ok()
@@ -41,12 +41,24 @@ async fn get_id_from_database(pool: SqlitePool, poll: &Poll) -> i32 {
         .await.unwrap();
     poll_id
 }
+async fn get_questions_from_database(pool: SqlitePool, poll_id: i32) -> Vec<Question> {
+    let questions = sqlx::query_as::<_, Question>("SELECT * FROM question WHERE poll_id = ?")
+        .bind(poll_id)
+        .fetch_all(&pool)
+        .await?;
+    questions
+}
+
 async fn get_poll_from_database(pool: SqlitePool, poll_id: i32) -> Poll {
-    let poll: Poll = sqlx::query_scalar("SELECT * FROM poll WHERE id = ?")
+    let poll_row: Poll = sqlx::query_as::<_, Poll>("SELECT * FROM poll WHERE id = ?")
         .bind(&poll_id)
         .fetch_one(&pool)
-        .await.unwrap()x;
-    poll
+        .await.unwrap();
+    let questions: Vec<Question> = get_questions_from_database(pool.clone(), poll_id).await;
+    Poll {
+        title: poll_row.title,
+        questions,
+    }
 }
 async fn insert_poll(pool: SqlitePool, poll: &Poll) -> Result<(), std::io::Error> {
     // Insert the poll into the `poll` table
