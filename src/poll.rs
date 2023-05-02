@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use sqlx::{Sqlite, Type};
 
-#[derive(Serialize, Deserialize, Debug, sqlx::FromRow, sqlx::Type, sqlx::Decode, sqlx::Encode)]
+#[derive(Serialize, Deserialize, Debug, sqlx::Type, sqlx::Decode, sqlx::Encode)]
 pub struct Question {
     pub text: String,
     pub options: Vec<String>,
