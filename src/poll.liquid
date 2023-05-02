@@ -11,24 +11,71 @@
     <div class="bg-gray-800 p-6 rounded-lg shadow-md">
         <h1 class="text-xl font-bold mb-6">{{ poll.title }}</h1>
 
-        {% for question in poll.questions %}
-            <div class="mb-4 poll-question">
-                <label class="block font-bold mb-2">{{ question.text }}</label>
-                {% for option in question.options %}
-                    <label class="inline-flex items-center mt-3">
-                        <input type="checkbox" class="form-checkbox h-5 w-5 text-gray-600" name="question{{ forloop.parentloop.index }}[]" value="{{ option }}">
-                        <span class="ml-2">{{ option }}</span>
-                    </label>
-                {% endfor %}
-            </div>
-        {% endfor %}
+        <form id="poll-form">
+            {% for question in poll.questions %}
+                <div class="mb-4 poll-question">
+                    <label class="block font-bold mb-2">{{ question.text }}</label>
+                    {% for option in question.options %}
+                        <label class="inline-flex items-center mt-3">
+                            <input type="checkbox" class="form-checkbox h-5 w-5 text-gray-600" name="question{{ forloop.parentloop.index }}[]" value="{{ option }}">
+                            <span class="ml-2">{{ option }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            {% endfor %}
 
-        <button id="submit-poll-button"
-                class="block mt-4 bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline-blue"
-                type="submit">
-            Send Answers
-        </button>
+            <button id="submit-poll-button"
+                    class="block mt-4 bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline-blue"
+                    type="submit">
+                Send Answers
+            </button>
+        </form>
     </div>
 </div>
+<script>
+    const pollForm = document.getElementById('poll-form');
+    const submitButton = document.getElementById('submit-poll-button');
+
+    // Add event listener to submit button
+    submitButton.addEventListener('click', (event) => {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Serialize the form data to an array of objects
+        const formData = new FormData(pollForm);
+        const data = [];
+        const questionCount = document.querySelectorAll('.poll-question').length;
+        for (let i = 1; i <= questionCount; i++) {
+            const questionTitle = document.querySelector(`.poll-question:nth-of-type(${i}) label`).textContent.trim();
+            const optionVotes = Array.from(formData.getAll(`question${i}[]`)).map(option => (option ? 1 : 0));
+            data.push({ question_title: questionTitle, option_votes: optionVotes });
+        }
+        const jsonData = JSON.stringify(data);
+
+        // Send the data to the server using fetch
+        fetch('/save_votes/{{ poll_id }}', {
+            method: 'POST',
+            body: jsonData,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                console.log("Got right response");
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    });
+
+
+</script>
+
 </body>
 </html>

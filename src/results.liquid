@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Poll Results</title>
+</head>
+<body>
+<h1>Poll Results</h1>
+<ul>
+    {% for vote in votes %}
+        <li>
+            <h2>{{ vote.question_title }}</h2>
+            <ul>
+                {% for option_vote in vote.option_votes %}
+                    <li>{{ option_vote }}</li>
+                {% endfor %}
+            </ul>
+        </li>
+    {% endfor %}
+</ul>
+</body>
+</html>
