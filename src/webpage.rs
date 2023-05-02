@@ -38,7 +38,6 @@ async fn save_votes(body: String, poll_id: web::Path<i32>) -> impl Responder {
         println!("{:?}", vote);
         save_votes_to_db(pool.clone(), *poll_id, vote).await;
     }
-
     HttpResponse::Ok()
 }
 
@@ -61,7 +60,13 @@ async fn poll_page(poll_id: web::Path<i32>) -> HttpResponse {
         .content_type("text/html; charset=utf-8")
         .body(body)
 }
-
+#[get("/submitted_successfully")]
+async fn submitted_successfully() -> HttpResponse {
+    let body = read_to_string("src/submit.liquid").unwrap();
+    HttpResponse::Ok()
+        .content_type("text/html; charset=utf-8")
+        .body(body)
+}
 #[get("/poll_results/{poll_id}")]
 async fn poll_results(poll_id: web::Path<i32>) -> HttpResponse {
     let pool = SqlitePool::connect("identifier.sqlite").await.unwrap();
@@ -82,6 +87,8 @@ pub(crate) async fn main() -> std::io::Result<()> {
             .service(create_poll)
             .service(poll_page)
             .service(save_votes)
+            .service(poll_results)
+            .service(submitted_successfully)
     })
     .bind("127.60.20.1:7373")?
     .run()

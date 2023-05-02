@@ -64,6 +64,7 @@
                     throw new Error('Network response was not ok');
                 }
                 console.log("Got right response");
+                window.location.href = "/submitted_successfully";
                 return response.json();
             })
             .then(data => {

@@ -109,7 +109,7 @@ pub(crate) async fn get_votes_from_db(pool: SqlitePool, poll_id: i32) -> Vec<Vot
     let votes: Vec<Vote> = votes_row_raw
         .iter()
         .map(|row| {
-            let question_title: String = row.get("text");
+            let question_title: String = row.get("question_title");
             let option1_votes: i32 = row.get("option1_votes");
             let option2_votes: i32 = row.get("option2_votes");
             let option3_votes: i32 = row.get("option3_votes");
