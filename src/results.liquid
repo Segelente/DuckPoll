@@ -1,21 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Poll Results</title>
+    <!-- Include Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-<h1>Poll Results</h1>
-<ul>
-    {% for vote in votes %}
-        <li>
-            <h2>{{ vote.question_title }}</h2>
-            <ul>
-                {% for option_vote in vote.option_votes %}
-                    <li>{{ option_vote }}</li>
-                {% endfor %}
-            </ul>
-        </li>
-    {% endfor %}
-</ul>
+<body class="bg-gray-900 text-white">
+<div class="max-w-md mx-auto mt-10">
+    <h1 class="text-xl font-bold mb-6">Poll Results</h1>
+    <ul class="list-disc">
+        {% for vote in votes %}
+            <li>
+                <h2 class="font-bold">{{ vote.question_title }}</h2>
+                <ul class="list-disc ml-4">
+                    {% for option_vote in vote.option_votes %}
+                        <li>{{ option_vote }}</li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
 </body>
 </html>
+
