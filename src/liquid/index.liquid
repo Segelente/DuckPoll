@@ -23,17 +23,17 @@
                 </label>
                 <input class="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline-gray bg-gray-700" id="question" name="question" type="text" placeholder="Enter your poll question">
             </div>
-            <div class="mb-4 option1" style="display:none">
-                <label class="block font-bold mb-2" for="option1">
-                    Option 1
+            <div class="mb-4 answer1" style="display:none">
+                <label class="block font-bold mb-2" for="answer1">
+                    answer 1
                 </label>
-                <input class="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline-gray bg-gray-700" id="option1" name="option1" type="text" placeholder="Enter option 1">
+                <input class="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline-gray bg-gray-700" id="answer1" name="answer1" type="text" placeholder="Enter answer 1">
             </div>
-            <div class="mb-4 option2" style="display:none">
-                <label class="block font-bold mb-2" for="option2">
-                    Option 2
+            <div class="mb-4 answer2" style="display:none">
+                <label class="block font-bold mb-2" for="answer2">
+                    answer 2
                 </label>
-                <input class="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline-gray bg-gray-700" id="option2" name="option2" type="text" placeholder="Enter option 2">
+                <input class="appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline-gray bg-gray-700" id="answer2" name="answer2" type="text" placeholder="Enter answer 2">
             </div>
 
             <button id="add_question" class="bg-gray-700 hover:bg-gray-600 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline-gray mr-2" type="button">
@@ -51,37 +51,37 @@
 </div>
 
 <script>
-    function createOptionField(questionCount, optionCount) {
-        const optionContainer = document.createElement("div");
-        optionContainer.classList.add("mb-4");
+    function createanswerField(questionCount, answerCount) {
+        const answerContainer = document.createElement("div");
+        answerContainer.classList.add("mb-4");
 
-        const optionLabel = document.createElement("label");
-        optionLabel.classList.add("block");
-        optionLabel.classList.add("font-bold");
-        optionLabel.classList.add("mb-2");
-        optionLabel.setAttribute("for", `question-${questionCount}-option${optionCount}`);
-        optionLabel.innerText = `Option ${optionCount}`;
+        const answerLabel = document.createElement("label");
+        answerLabel.classList.add("block");
+        answerLabel.classList.add("font-bold");
+        answerLabel.classList.add("mb-2");
+        answerLabel.setAttribute("for", `question-${questionCount}-answer${answerCount}`);
+        answerLabel.innerText = `answer ${answerCount}`;
 
-        const optionInput = document.createElement("input");
-        optionInput.classList.add("appearance-none");
-        optionInput.classList.add("border");
-        optionInput.classList.add("rounded");
-        optionInput.classList.add("w-full");
-        optionInput.classList.add("py-2");
-        optionInput.classList.add("px-3");
-        optionInput.classList.add("leading-tight");
-        optionInput.classList.add("focus:outline-none");
-        optionInput.classList.add("focus:shadow-outline-gray");
-        optionInput.classList.add("bg-gray-700");
-        optionInput.setAttribute("id", `question-${questionCount}-option${optionCount}`);
-        optionInput.setAttribute("name", `question-${questionCount}-option${optionCount}`);
-        optionInput.setAttribute("type", "text");
-        optionInput.setAttribute("placeholder", `Enter option ${optionCount}`);
+        const answerInput = document.createElement("input");
+        answerInput.classList.add("appearance-none");
+        answerInput.classList.add("border");
+        answerInput.classList.add("rounded");
+        answerInput.classList.add("w-full");
+        answerInput.classList.add("py-2");
+        answerInput.classList.add("px-3");
+        answerInput.classList.add("leading-tight");
+        answerInput.classList.add("focus:outline-none");
+        answerInput.classList.add("focus:shadow-outline-gray");
+        answerInput.classList.add("bg-gray-700");
+        answerInput.setAttribute("id", `question-${questionCount}-answer${answerCount}`);
+        answerInput.setAttribute("name", `question-${questionCount}-answer${answerCount}`);
+        answerInput.setAttribute("type", "text");
+        answerInput.setAttribute("placeholder", `Enter answer ${answerCount}`);
 
-        optionContainer.appendChild(optionLabel);
-        optionContainer.appendChild(optionInput);
+        answerContainer.appendChild(answerLabel);
+        answerContainer.appendChild(answerInput);
 
-        return optionContainer;
+        return answerContainer;
     }
     const form = document.querySelector('form');
     const pollNameInput = document.getElementById('title');
@@ -102,13 +102,13 @@
             if (question) {
                 const questionObj = {
                     text: question.value,
-                    options: []
+                    answers: []
                 };
 
                 for (let j = 1; j <= 3; j++) {
-                    const option = document.querySelector(`#question-${i}-option${j}`);
-                    if (option) {
-                        questionObj.options.push(option.value);
+                    const answer = document.querySelector(`#question-${i}-answer${j}`);
+                    if (answer) {
+                        questionObj.answers.push(answer.value);
                     }
                 }
 
@@ -170,8 +170,8 @@
         newQuestionContainer.appendChild(newQuestionInput);
 
         for (let i = 1; i <= 3; i++) {
-            const optionField = createOptionField(questionCount, i);
-            newQuestionContainer.appendChild(optionField);
+            const answerField = createanswerField(questionCount, i);
+            newQuestionContainer.appendChild(answerField);
         }
 
         questionContainer.appendChild(newQuestionContainer);

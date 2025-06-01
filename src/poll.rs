@@ -1,18 +1,18 @@
 use serde::{Deserialize, Serialize};
 use sqlx::{Sqlite, Type};
 
-#[derive(Serialize, Deserialize, Debug, sqlx::Type, sqlx::Decode, sqlx::Encode)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Question {
     pub text: String,
-    pub options: Vec<String>,
+    pub answers: Vec<String>,
 }
-#[derive(Serialize, Deserialize, Debug, sqlx::FromRow, sqlx::Type, sqlx::Decode, sqlx::Encode)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Poll {
     pub title: String,
     pub questions: Vec<Question>,
 }
 
-#[derive(Serialize, Deserialize, Debug, sqlx::FromRow, sqlx::Type, sqlx::Decode, sqlx::Encode)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Vote {
     pub question_title: String,
     pub option_votes: Vec<i32>,
@@ -25,8 +25,8 @@ impl Poll {
 }
 
 impl Question {
-    pub(crate) fn new(text: String, options: Vec<String>) -> Question {
-        Question { text, options }
+    pub(crate) fn new(text: String, answers: Vec<String>) -> Question {
+        Question { text, answers }
     }
 }
 
